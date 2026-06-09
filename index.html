@@ -388,7 +388,7 @@ function addRipple(e,btn){
 }
 
 // ════════════════════════════════════════
-//  PRODUCTS SYSTEM & LOCALSTORAGE
+//  PRODUCTS SYSTEM - FIXED FOR CUSTOM DOMAIN
 // ════════════════════════════════════════
 const defaultProducts = [
   {id:1,name:'سماعة TWS برو المستقبلية',category:'صوتيات',emoji:'🎧',badge:'جديد',badgeClass:'new',price:35000,oldPrice:45000,rating:4.8,reviews:124,desc:'سماعة عزل صوتي متكاملة ومقاومة للتعرق مع علبة شحن لاسلكية.'},
@@ -396,7 +396,17 @@ const defaultProducts = [
   {id:3,name:'باور بانك نانو كوانتم 20000',category:'طاقة',emoji:'🔋',badge:'عرض خاص',badgeClass:'sale',price:28000,oldPrice:38000,rating:4.7,reviews:98,desc:'شحن بقدرة 65 واط متوافق مع الحواسيب المحمولة والهواتف الذكية.'}
 ];
 
-function loadProducts(){ try{const s=localStorage.getItem('kepler_products'); return s?JSON.parse(s):[...defaultProducts];}catch(e){return [...defaultProducts];} }
+function loadProducts(){ 
+  try {
+    const s = localStorage.getItem('kepler_products'); 
+    if (!s || JSON.parse(s).length === 0) {
+      return [...defaultProducts];
+    }
+    return JSON.parse(s);
+  } catch(e) {
+    return [...defaultProducts];
+  } 
+}
 function saveProducts(){ localStorage.setItem('kepler_products',JSON.stringify(products)); }
 
 let products = loadProducts();
@@ -635,6 +645,9 @@ function saveEdit(){
   saveProducts(); renderProducts(); openAdmin('products'); showToast('✅ تم التعديل');
 }
 
+// ════════════════════════════════════════
+//  ADMIN FUNCTIONS & UTILITIES
+// ════════════════════════════════════════
 function deleteProduct(id){
   if(!confirm('هل أنت متأكد؟')) return;
   products=products.filter(x=>x.id!==id); saveProducts(); renderProducts(); openAdmin('products'); showToast('🗑️ تم الحذف');
