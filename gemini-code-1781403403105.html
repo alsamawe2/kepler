@@ -1,0 +1,316 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Kepler — كيبلر للبصريات</title>
+<link href="https://fonts.googleapis.com/css2=family=Cairo:wght@400;600;700;900&family=Playfair+Display:wght@700;900&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#060608;--bg2:#0c0c10;--card:#111116;--card2:#16161c;
+  --gold:#c4953a;--gold2:#ddb04e;--goldG:linear-gradient(135deg,#c4953a,#ddb04e,#c9a84c);
+  --text:#f0ece0;--muted:#8b8378;--soft:#bfaea0;
+  --border:rgba(196,149,58,.18);--border2:rgba(196,149,58,.35);
+  --danger:#c94444;--success:#3d8c5f;
+}
+*{margin:0;padding:0;box-sizing:border-box;}
+html{scroll-behavior:smooth;}
+body{background:var(--bg);color:var(--text);font-family:'Cairo',sans-serif;overflow-x:hidden;}
+
+.orbs{position:fixed;inset:0;z-index:0;pointer-events:none;overflow:hidden;}
+.orb{position:absolute;border-radius:50%;filter:blur(100px);animation:orbF var(--d,18s) ease-in-out infinite alternate;}
+.o1{width:650px;height:650px;top:-15%;right:-12%;background:radial-gradient(circle,rgba(196,149,58,.07),transparent 70%);--d:17s;}
+.o2{width:550px;height:550px;bottom:-8%;left:-8%;background:radial-gradient(circle,rgba(80,50,160,.05),transparent 70%);--d:23s;}
+@keyframes orbF{0%{transform:translate(0,0) scale(1)}100%{transform:translate(30px,20px) scale(1.08)}}
+
+.cov{position:fixed;inset:0;background:rgba(0,0,0,.65);z-index:8000;opacity:0;pointer-events:none;transition:opacity .3s;backdrop-filter:blur(5px);}
+.cov.on{opacity:1;pointer-events:all;}
+.csb{position:fixed;top:0;right:0;width:min(320px,88vw);height:100vh;background:var(--bg2);border-left:1px solid var(--border);z-index:8001;display:flex;flex-direction:column;transform:translateX(110%);transition:transform .38s cubic-bezier(.4,0,.2,1);}
+.csb.on{transform:translateX(0);}
+.csb-head{padding:1.5rem;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;}
+.csb-head h3{font-size:1.1rem;font-weight:900;background:var(--goldG);-webkit-background-clip:text;-webkit-text-fill-color:transparent;}
+.clist{padding:1rem .8rem;flex:1;overflow-y:auto;}
+.ci{display:flex;align-items:center;gap:1rem;padding:1.1rem 1.2rem;border-radius:12px;cursor:pointer;transition:all .2s;margin-bottom:6px;color:var(--soft);font-weight:700;font-size:1.05rem;position:relative;}
+.ci:hover{background:rgba(196,149,58,.08);color:var(--text);}
+.ci.act{background:rgba(196,149,58,.12);color:var(--gold2);font-size:1.1rem;}
+.ci.act::before{content:'';position:absolute;right:0;top:15%;height:70%;width:4px;background:var(--goldG);border-radius:4px;}
+
+nav{position:sticky;top:0;z-index:1000;background:rgba(6,6,8,.95);backdrop-filter:blur(24px) saturate(180%);border-bottom:1px solid var(--border);padding:0 5%;display:flex;align-items:center;justify-content:space-between;height:75px;}
+.ham{width:45px;height:45px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:6px;cursor:pointer;border:none;background:transparent;}
+.hline{width:26px;height:2px;background:var(--gold2);border-radius:2px;}
+.logo-a{display:flex;align-items:center;gap:10px;text-decoration:none;}
+.ltxt{display:flex;flex-direction:column;line-height:1.2;}
+.len{font-family:'Playfair Display',serif;font-size:1.5rem;font-weight:900;letter-spacing:4px;background:var(--goldG);-webkit-background-clip:text;-webkit-text-fill-color:transparent;}
+.lar{font-size:.65rem;color:var(--soft);letter-spacing:2px;font-weight:700;text-align:center;}
+.nav-r{display:flex;align-items:center;gap:12px;}
+.cur-tog{display:flex;background:var(--card);border:1px solid var(--border);border-radius:50px;padding:2px;}
+.curb{border:none;background:transparent;padding:6px 14px;font-family:'Cairo',sans-serif;font-size:.85rem;font-weight:800;color:var(--muted);cursor:pointer;border-radius:50px;transition:all .2s;}
+.curb.on{background:var(--goldG);color:#000;}
+.cfab{position:relative;background:var(--goldG);border:none;border-radius:50px;padding:9px 18px;color:#000;font-family:'Cairo',sans-serif;font-weight:900;font-size:1rem;cursor:pointer;display:flex;align-items:center;gap:6px;}
+.cn{position:absolute;top:-8px;left:-6px;background:#000;color:var(--gold2);border-radius:50%;width:22px;height:22px;display:flex;align-items:center;justify-content:center;font-size:.75rem;font-weight:900;border:2px solid var(--gold);}
+
+.hero{position:relative;z-index:1;min-height:25vh;display:flex;align-items:center;padding:2.5rem 8%;}
+.hero h1{font-family:'Cairo',sans-serif;font-size:clamp(1.9rem, 4.5vw, 3.5rem);font-weight:900;line-height:1.3;margin-bottom:.5rem;}
+.hero h1 span{background:var(--goldG);-webkit-background-clip:text;-webkit-text-fill-color:transparent;}
+
+.sec{padding:1.5rem 6%;position:relative;z-index:1;}
+.pgrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(310px,1fr));gap:1.8rem;}
+
+.pcard{background:var(--card);border:1px solid var(--border);border-radius:24px;overflow:hidden;transition:all .35s;position:relative;}
+.pcard:hover{transform:translateY(-8px);border-color:var(--border2);box-shadow:0 12px 30px rgba(0,0,0,.4);}
+.gal{position:relative;width:100%;height:320px;background:var(--card2);overflow:hidden;}
+.gal-slides{display:flex;height:100%;transition:transform .4s cubic-bezier(.25,1,.5,1);direction:ltr;}
+.gal-slide{min-width:100%;height:100%;}
+.gal-slide img{width:100%;height:100%;object-fit:cover;}
+.gal-overlay{position:absolute;bottom:0;left:0;right:0;z-index:3;padding:1.2rem 1.4rem;background:linear-gradient(to top,rgba(6,6,8,.9),transparent 80%);}
+.gal-price{font-size:1.45rem;font-weight:900;color:#fff;text-shadow:0 2px 4px rgba(0,0,0,.5);}
+.gal-arr{position:absolute;top:50%;transform:translateY(-50%);z-index:4;width:38px;height:38px;background:rgba(6,6,8,.75);border:1px solid rgba(255,255,255,.2);border-radius:50%;color:#fff;cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:1.1rem;transition:all .2s;}
+.gal-arr:hover{background:var(--goldG);color:#000;}
+.arr-r{right:12px;} .arr-l{left:12px;}
+.pbody{padding:1.2rem 1.4rem 1.5rem;}
+.pcat{color:var(--gold2);font-size:.75rem;font-weight:800;text-transform:uppercase;letter-spacing:1px;margin-bottom:.4rem;}
+.pname{font-size:1.15rem;font-weight:800;line-height:1.4;margin-bottom:.8rem;color:#fff;}
+.addbtn{width:100%;background:var(--goldG);border:none;border-radius:14px;padding:14px;color:#000;font-weight:900;font-size:1.05rem;cursor:pointer;transition:all .2s;}
+.addbtn:hover{transform:scale(1.02);box-shadow:0 4px 15px rgba(196,149,58,.3);}
+
+.kov{position:fixed;inset:0;background:rgba(0,0,0,.8);backdrop-filter:blur(8px);z-index:9000;opacity:0;pointer-events:none;transition:opacity .3s;}
+.kov.on{opacity:1;pointer-events:all;}
+.kdr{position:fixed;top:0;left:0;width:min(450px,95vw);height:100vh;background:var(--bg2);z-index:9001;display:flex;flex-direction:column;transform:translateX(-112%);transition:transform .4s ease;}
+.kdr.on{transform:translateX(0);}
+.kh{padding:1.5rem;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;}
+.kh h3{font-size:1.2rem;font-weight:900;}
+.kb{flex:1;overflow-y:auto;padding:1.5rem;}
+.kitem{display:flex;gap:1rem;padding:1rem 0;border-bottom:1px solid var(--border);align-items:center;}
+.kth{width:65px;height:65px;border-radius:12px;overflow:hidden;border:1px solid var(--border);}
+.kth img{width:100%;height:100%;object-fit:cover;}
+.kitem strong{font-size:1.05rem;color:#fff;}
+.kitem span{font-size:.95rem;color:var(--soft);}
+.kf{padding:1.5rem;border-top:1px solid var(--border);background:var(--card);}
+.kf span{font-size:1.05rem;}
+#kTotal{font-size:1.4rem;color:var(--gold2);font-weight:900;}
+.chkbtn{width:100%;background:var(--goldG);border:none;border-radius:14px;padding:16px;color:#000;font-weight:900;font-size:1.1rem;cursor:pointer;margin-top:.8rem;}
+
+.mov{position:fixed;inset:0;background:rgba(0,0,0,.92);backdrop-filter:blur(12px);z-index:10000;display:flex;align-items:center;justify-content:center;padding:1.5rem;opacity:0;pointer-events:none;transition:opacity .3s;}
+.mov.on{opacity:1;pointer-events:all;}
+.modal{background:var(--bg2);border:1px solid var(--border);border-radius:24px;width:min(520px,100%);padding:2rem;position:relative;}
+.modal h3{font-size:1.3rem;font-weight:900;margin-bottom:1.2rem;}
+.fg{display:flex;flex-direction:column;gap:6px;margin-bottom:1.2rem;}
+.fg label{font-size:.95rem;font-weight:700;color:var(--soft);}
+.fg input{background:var(--card);border:1px solid var(--border);border-radius:10px;padding:12px 14px;color:var(--text);outline:none;font-size:1rem;font-family:'Cairo',sans-serif;}
+.fg input:focus{border-color:var(--gold2);}
+</style>
+</head>
+<body>
+
+<div class="orbs"><div class="orb o1"></div><div class="orb o2"></div></div>
+<div class="cov" id="cov" onclick="toggleSb()"></div>
+<div class="kov" id="kov" onclick="toggleCart()"></div>
+<div class="mov" id="mov" onclick="if(event.target.id==='mov') closeModal()"></div>
+
+<div class="csb" id="csb">
+  <div class="csb-head"><h3>🗂 تصنيفات المعرض</h3><button onclick="toggleSb()" style="background:none;border:none;color:#fff;font-size:1.3rem;cursor:pointer;">✕</button></div>
+  <div class="clist" id="cList"></div>
+</div>
+
+<nav id="nav">
+  <button class="ham" id="ham" onclick="toggleSb()"><div class="hline"></div><div class="hline"></div><div class="hline"></div></button>
+  <a class="logo-a" href="#"><div class="ltxt"><span class="len">KEPLER</span><span class="lar">كيبلر للبصريات</span></div></a>
+  <div class="nav-r">
+    <div class="cur-tog">
+      <button class="curb on" id="bIqd" onclick="setCur('IQD')">د.ع</button>
+      <button class="curb" id="bUsd" onclick="setCur('USD')">$</button>
+    </div>
+    <button class="cfab" onclick="toggleCart()">🛒 <span class="cn" id="cartC">0</span></button>
+  </div>
+</nav>
+
+<section class="hero">
+  <h1>حيث تلتقي الأناقة <br><span>بوضوح الرؤية الكامل</span></h1>
+</section>
+
+<section class="sec" id="catalog">
+  <div class="pgrid" id="pGrid">جاري جلب النظارات مباشرة من جيت هاب...</div>
+</section>
+
+<div class="kdr" id="kdr">
+  <div class="kh"><h3>🛒 سلة المشتريات</h3><button onclick="toggleCart()" style="background:none;border:none;color:#fff;font-size:1.3rem;cursor:pointer;">✕</button></div>
+  <div class="kb" id="kIb"></div>
+  <div class="kf">
+    <div style="display:flex;justify-content:space-between;align-items:center;"><span>الإجمالي الحالي:</span><strong id="kTotal">0 د.ع</strong></div>
+    <button class="chkbtn" onclick="openCheckout()">المتابعة لتأكيد الطلب</button>
+  </div>
+</div>
+
+<script>
+const REPO_OWNER = "alsamawe2";
+const REPO_NAME = "picture-of-kepler";
+const GITHUB_API_URL = `https://api.github.com/repos/${REPO_OWNER}/${REPO_NAME}/contents`;
+const RAW_BASE_URL = `https://raw.githubusercontent.com/alsamawe2/picture-of-kepler/main/`;
+const WHATSAPP_NUM = "9647746826442";
+const USD_RATE = 1310;
+
+let PRODUCTS = [];
+let cur = 'IQD';
+let cart = [];
+let actCat = 'الكل';
+let galIdx = {};
+
+window.addEventListener('DOMContentLoaded', fetchImagesFromGithub);
+
+async function fetchImagesFromGithub() {
+  try {
+    const res = await fetch(GITHUB_API_URL);
+    const files = await res.json();
+    
+    if(!Array.isArray(files)) throw new Error("Err");
+
+    let tempProducts = {};
+
+    files.forEach(file => {
+      let name = file.name;
+      if(name.endsWith('.jpg') || name.endsWith('.png') || name.endsWith('.jpeg')) {
+        let cleanName = name.substring(0, name.lastIndexOf('.'));
+        let parts = cleanName.split('-');
+
+        let cat = parts[0] || "عام";
+        let pName = parts[1] || cleanName;
+        let price = parseFloat(parts[2]) || 35000; 
+
+        // معالجة وحذف أرقام السلايدر الزائدة (مثل -1 أو -2) لكي لا تنعزل الصور كمنتجات منفصلة
+        if (parts.length > 3) {
+          let lastPart = parts[parts.length - 1];
+          if (!isNaN(lastPart) || lastPart.includes('(') || lastPart.trim() === '') {
+            // إعادة بناء الاسم بدون رقم السلايدر الأخير
+            pName = parts.slice(1, parts.length - 1).join('-');
+          }
+        }
+
+        let productKey = `${cat}-${pName}-${price}`.trim();
+
+        if(!tempProducts[productKey]) {
+          tempProducts[productKey] = { cat: cat, name: pName, price: price, imgs: [] };
+        }
+        tempProducts[productKey].imgs.push(RAW_BASE_URL + name);
+      }
+    });
+
+    PRODUCTS = Object.values(tempProducts).map((p, index) => ({ id: index + 1, ...p }));
+
+    if(PRODUCTS.length === 0) {
+      PRODUCTS = [{
+        id: 1, cat: "شمسية", name: "نظارة كيبلر التجريبية الكبيرة", price: 35000,
+        imgs: [RAW_BASE_URL + "photo_2026-06-14_02-44-46.jpg"]
+      }];
+    }
+
+    setupCats();
+    renderProducts();
+  } catch (e) {
+    document.getElementById('pGrid').innerHTML = `<p style='grid-column:1/-1; text-align:center; color:red; font-weight:bold; font-size:1.1rem;'>تنبيه: يرجى التأكد من أن مستودع الصور في جيت هاب مضبوط على الوضع العام Public لتظهر النظارات.</p>`;
+  }
+}
+
+function setupCats(){
+  const cats = ['الكل', ...new Set(PRODUCTS.map(p => p.cat))];
+  const list = document.getElementById('cList');
+  list.innerHTML = '';
+  cats.forEach(c => {
+    const div = document.createElement('div');
+    div.className = `ci ${c === actCat ? 'act' : ''}`;
+    div.onclick = () => { actCat = c; setupCats(); toggleSb(false); renderProducts(); };
+    div.innerHTML = `<span>${c}</span>`;
+    list.appendChild(div);
+  });
+}
+
+function renderProducts(){
+  const grid = document.getElementById('pGrid');
+  grid.innerHTML = '';
+  const filtered = actCat === 'الكل' ? PRODUCTS : PRODUCTS.filter(p => p.cat === actCat);
+
+  filtered.forEach(p => {
+    if(galIdx[p.id] === undefined) galIdx[p.id] = 0;
+    const card = document.createElement('div');
+    card.className = 'pcard';
+    card.innerHTML = `
+      <div class="gal">
+        ${p.imgs.length > 1 ? `<button class="gal-arr arr-l" onclick="moveGal(${p.id},-1,event)">❯</button><button class="gal-arr arr-r" onclick="moveGal(${p.id},1,event)">❮</button>` : ''}
+        <div class="gal-slides" id="slides-${p.id}" style="width: ${p.imgs.length * 100}%; transform: translateX(0%);">
+          ${p.imgs.map(img => `<div class="gal-slide" style="width: ${100 / p.imgs.length}%;"><img src="${img}"></div>`).join('')}
+        </div>
+        <div class="gal-overlay"><div class="gal-price">${fmt(p.price)}</div></div>
+      </div>
+      <div class="pbody">
+        <div class="pcat">${p.cat}</div>
+        <h3 class="pname">${p.name}</h3>
+        <button class="addbtn" onclick="add(${p.id})">🛒 أضف إلى السلة</button>
+      </div>
+    `;
+    grid.appendChild(card);
+  });
+}
+
+function moveGal(pid, dir, e) {
+  e.stopPropagation();
+  const p = PRODUCTS.find(x=>x.id===pid);
+  let next = galIdx[pid] + dir;
+  if(next >= p.imgs.length) next = 0;
+  if(next < 0) next = p.imgs.length - 1;
+  galIdx[pid] = next;
+  // تعديل نسبة الإزاحة لتتوافق مع اتجاه الـ RTL والموقع الجغرافي العربي بشكل سليم
+  document.getElementById(`slides-${pid}`).style.transform = `translateX(${next * (100 / p.imgs.length)}%)`;
+}
+
+function add(pid){
+  const p = PRODUCTS.find(x=>x.id===pid);
+  const ext = cart.find(x => x.id === pid);
+  if(ext) ext.qty++;
+  else cart.push({ id: p.id, name: p.name, price: p.price, img: p.imgs[0], qty: 1 });
+  updateCart();
+}
+
+function updateCart(){
+  document.getElementById('cartC').innerText = cart.reduce((s,x)=>s+x.qty, 0);
+  const ib = document.getElementById('kIb'); ib.innerHTML = ''; let tot = 0;
+  cart.forEach(item => {
+    tot += item.price * item.qty;
+    ib.innerHTML += `<div class="kitem"><div class="kth"><img src="${item.img}"></div><div><strong>${item.name}</strong><br><span>${item.qty} × ${fmt(item.price)}</span></div></div>`;
+  });
+  document.getElementById('kTotal').innerText = fmt(tot);
+}
+
+function fmt(num){ return cur === 'IQD' ? num.toLocaleString('ar-IQ') + " د.ع" : "$" + (num / USD_RATE).toFixed(2); }
+function setCur(c){ cur = c; document.getElementById('bIqd').classList.toggle('on',c==='IQD'); document.getElementById('bUsd').classList.toggle('on',c==='USD'); renderProducts(); updateCart(); }
+function toggleSb(open){ const el = document.getElementById('csb'); el.classList.toggle('on', open !== undefined ? open : !el.classList.contains('on')); document.getElementById('cov').classList.toggle('on', el.classList.contains('on')); }
+function toggleCart(open){ const el = document.getElementById('kdr'); el.classList.toggle('on', open !== undefined ? open : !el.classList.contains('on')); document.getElementById('kov').classList.toggle('on', el.classList.contains('on')); }
+function closeModal(){ document.getElementById('mov').classList.remove('on'); }
+
+function openCheckout(){
+  toggleCart(false);
+  document.getElementById('mov').innerHTML = `
+    <div class="modal">
+      <button onclick="closeModal()" style="position:absolute; top:15px; left:20px; background:none; border:none; color:#fff; font-size:1.2rem; cursor:pointer;">✕</button>
+      <h3>📋 استكمال تفاصيل الطلب</h3>
+      <div class="fg"><label>الاسم الكامل</label><input type="text" id="oName" placeholder="اكتب اسمك الثلاثي"></div>
+      <div class="fg"><label>رقم الهاتف</label><input type="text" id="oPhone" placeholder="077XXXXXXXX"></div>
+      <div class="fg"><label>العنوان بالتفصيل</label><input type="text" id="oAddr" placeholder="المحافظة - المنطقة - معلم قريب"></div>
+      <button class="chkbtn" onclick="sendOrder()">🚀 إرسال الطلب عبر الواتساب</button>
+    </div>
+  `;
+  document.getElementById('mov').classList.add('on');
+}
+
+function sendOrder(){
+  const name = document.getElementById('oName').value;
+  const phone = document.getElementById('oPhone').value;
+  const addr = document.getElementById('oAddr').value;
+  if(!name || !phone || !addr) return alert("يرجى ملء جميع الحقول المطلوبة لضمان وصول الطلب");
+  let txt = `🌟 طلب جديد من متجر كيبلر 🌟\n\n👤 العميل: ${name}\n📞 الهاتف: ${phone}\n📍 العنوان: ${addr}\n\n📦 المنتجات المطلوبة:\n`;
+  cart.forEach(x => { txt += `- ${x.name} (العدد: ${x.qty})\n`; });
+  txt += `\n💰 الإجمالي الكلي: ${document.getElementById('kTotal').innerText}`;
+  window.open(`https://wa.me/${WHATSAPP_NUM}?text=${encodeURIComponent(txt)}`, '_blank');
+  cart = []; updateCart(); closeModal();
+}
+</script>
+</body>
+</html>
