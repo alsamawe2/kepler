@@ -4,7 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Kepler — كيبلر للبصريات</title>
-<link href="https://fonts.googleapis.com/css2=family=Cairo:wght@400;600;700;900&family=Playfair+Display:wght@700;900&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;900&family=Playfair+Display:wght@700;900&display=swap" rel="stylesheet">
 <style>
 :root{
   --bg:#060608;--bg2:#0c0c10;--card:#111116;--card2:#16161c;
@@ -176,16 +176,7 @@ async function fetchImagesFromGithub() {
         let pName = parts[1] || cleanName;
         let price = parseFloat(parts[2]) || 35000; 
 
-        // معالجة وحذف أرقام السلايدر الزائدة (مثل -1 أو -2) لكي لا تنعزل الصور كمنتجات منفصلة
-        if (parts.length > 3) {
-          let lastPart = parts[parts.length - 1];
-          if (!isNaN(lastPart) || lastPart.includes('(') || lastPart.trim() === '') {
-            // إعادة بناء الاسم بدون رقم السلايدر الأخير
-            pName = parts.slice(1, parts.length - 1).join('-');
-          }
-        }
-
-        let productKey = `${cat}-${pName}-${price}`.trim();
+        let productKey = `${cat}-${pName}-${price}`;
 
         if(!tempProducts[productKey]) {
           tempProducts[productKey] = { cat: cat, name: pName, price: price, imgs: [] };
@@ -199,7 +190,7 @@ async function fetchImagesFromGithub() {
     if(PRODUCTS.length === 0) {
       PRODUCTS = [{
         id: 1, cat: "شمسية", name: "نظارة كيبلر التجريبية الكبيرة", price: 35000,
-        imgs: [RAW_BASE_URL + "photo_2026-06-14_02-44-46.jpg"]
+        imgs: [RAW_BASE_URL + "photo_2026-06-14_02-44-46.jpg", RAW_BASE_URL + "photo_2026-06-14_02-44-46 (2).jpg"]
       }];
     }
 
@@ -235,7 +226,7 @@ function renderProducts(){
     card.innerHTML = `
       <div class="gal">
         ${p.imgs.length > 1 ? `<button class="gal-arr arr-l" onclick="moveGal(${p.id},-1,event)">❯</button><button class="gal-arr arr-r" onclick="moveGal(${p.id},1,event)">❮</button>` : ''}
-        <div class="gal-slides" id="slides-${p.id}" style="width: ${p.imgs.length * 100}%; transform: translateX(0%);">
+        <div class="gal-slides" id="slides-${p.id}" style="width: ${p.imgs.length * 100}%;">
           ${p.imgs.map(img => `<div class="gal-slide" style="width: ${100 / p.imgs.length}%;"><img src="${img}"></div>`).join('')}
         </div>
         <div class="gal-overlay"><div class="gal-price">${fmt(p.price)}</div></div>
@@ -257,7 +248,6 @@ function moveGal(pid, dir, e) {
   if(next >= p.imgs.length) next = 0;
   if(next < 0) next = p.imgs.length - 1;
   galIdx[pid] = next;
-  // تعديل نسبة الإزاحة لتتوافق مع اتجاه الـ RTL والموقع الجغرافي العربي بشكل سليم
   document.getElementById(`slides-${pid}`).style.transform = `translateX(${next * (100 / p.imgs.length)}%)`;
 }
 
