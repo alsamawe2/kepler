@@ -374,6 +374,39 @@ footer>p{color:var(--muted);font-size:.73rem;margin-bottom:1.4rem;}
 .lens-add-btn{background:linear-gradient(135deg,var(--gold),var(--gold2));color:#1a1408;border:none;border-radius:10px;padding:.6rem 1.1rem;font-weight:700;font-size:.85rem;cursor:pointer;font-family:inherit;transition:all .2s;}
 .lens-add-btn:hover{transform:translateY(-2px);box-shadow:0 8px 20px rgba(201,162,39,.3);}
 .lens-add-btn:disabled{opacity:.5;cursor:not-allowed;transform:none;box-shadow:none;}
+
+/* ═══ HD COLOR CATALOG ═══ */
+.hdc-overlay{position:fixed;inset:0;z-index:200;background:rgba(4,4,8,.82);backdrop-filter:blur(8px);
+  display:flex;align-items:center;justify-content:center;padding:1rem;opacity:0;visibility:hidden;transition:all .3s;}
+.hdc-overlay.open{opacity:1;visibility:visible;}
+.hdc-box{background:linear-gradient(160deg,#14141c,#0b0b12);border:1px solid rgba(201,162,39,.25);
+  border-radius:18px;max-width:560px;width:100%;max-height:88vh;display:flex;flex-direction:column;
+  box-shadow:0 25px 80px rgba(0,0,0,.6);transform:scale(.92);transition:transform .3s;}
+.hdc-overlay.open .hdc-box{transform:scale(1);}
+.hdc-head{display:flex;justify-content:space-between;align-items:flex-start;padding:1.3rem 1.4rem 1rem;
+  border-bottom:1px solid rgba(255,255,255,.07);}
+.hdc-head h3{font-size:1.15rem;color:var(--gold2);margin:0 0 3px;font-weight:700;}
+.hdc-head p{font-size:.78rem;color:var(--muted);margin:0;}
+.hdc-x{background:rgba(255,255,255,.06);border:none;color:#fff;width:32px;height:32px;border-radius:50%;
+  cursor:pointer;font-size:.9rem;flex-shrink:0;transition:background .2s;}
+.hdc-x:hover{background:rgba(255,255,255,.15);}
+.hdc-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;padding:1.3rem 1.4rem;overflow-y:auto;}
+.hdc-item{display:flex;flex-direction:column;align-items:center;gap:5px;cursor:pointer;padding:8px 4px;
+  border-radius:12px;border:2px solid transparent;transition:all .2s;}
+.hdc-item:hover{background:rgba(255,255,255,.04);}
+.hdc-item.sel{border-color:var(--gold2);background:rgba(201,162,39,.1);}
+.hdc-lens{width:54px;height:54px;border-radius:50%;box-shadow:0 3px 10px rgba(0,0,0,.4),inset 0 0 8px rgba(0,0,0,.3);
+  transition:transform .2s;}
+.hdc-item:hover .hdc-lens{transform:scale(1.08);}
+.hdc-name{font-size:.74rem;color:#eee;font-weight:600;text-align:center;line-height:1.1;}
+.hdc-en{font-size:.62rem;color:var(--muted);text-align:center;}
+.hdc-foot{padding:1rem 1.4rem 1.3rem;border-top:1px solid rgba(255,255,255,.07);}
+.hdc-confirm{width:100%;padding:.85rem;border:none;border-radius:12px;font-family:inherit;font-size:.92rem;
+  font-weight:700;cursor:pointer;background:linear-gradient(135deg,var(--gold),var(--gold2));color:#1a1206;
+  transition:all .2s;}
+.hdc-confirm:disabled{background:rgba(255,255,255,.08);color:var(--muted);cursor:not-allowed;}
+.hdc-confirm:not(:disabled):hover{transform:translateY(-2px);box-shadow:0 8px 20px rgba(201,162,39,.3);}
+@media(max-width:480px){.hdc-grid{grid-template-columns:repeat(3,1fr);}}
 </style>
 <body>
 
@@ -782,6 +815,70 @@ function fmt(iqd,html=true){
   window.addEventListener("resize",()=>{resize();init();});
 })();
 
+
+/* ═══ HD LENS COLOR CATALOG ═══ */
+const HD_COLORS = [
+  { name:"Gray", ar:"رمادي", c1:"#8a8d93", c2:"#3a3d44", ring:"#23252b" },
+  { name:"Blue Gray", ar:"رمادي أزرق", c1:"#8fa3c4", c2:"#3a4a6b", ring:"#26314a" },
+  { name:"Sky Blue", ar:"أزرق سماوي", c1:"#9cc7e8", c2:"#3f7bb0", ring:"#2a5580" },
+  { name:"Ocean Blue", ar:"أزرق محيطي", c1:"#6fa8d4", c2:"#1f5a8a", ring:"#143d61" },
+  { name:"Green", ar:"أخضر", c1:"#a3c79a", c2:"#3f7a3a", ring:"#2a5526" },
+  { name:"Emerald", ar:"زمردي", c1:"#7fc4a8", c2:"#1f7a5c", ring:"#13543e" },
+  { name:"Hazel", ar:"عسلي", c1:"#caa46a", c2:"#8a5a25", ring:"#5e3c17" },
+  { name:"Honey", ar:"عسلي فاتح", c1:"#dcb877", c2:"#a8772f", ring:"#7a5420" },
+  { name:"Brown", ar:"بني", c1:"#a8835a", c2:"#5e3c1f", ring:"#3f2813" },
+  { name:"Dark Brown", ar:"بني داكن", c1:"#6e5236", c2:"#3a2715", ring:"#26190d" },
+  { name:"Amber", ar:"كهرماني", c1:"#d4a04f", c2:"#9a6418", ring:"#6e470f" },
+  { name:"Violet", ar:"بنفسجي", c1:"#b89ed0", c2:"#6a4a93", ring:"#48316b" },
+  { name:"Pink", ar:"وردي", c1:"#e0a8bc", c2:"#b05a78", ring:"#823c54" },
+  { name:"Turquoise", ar:"فيروزي", c1:"#82cdcd", c2:"#1f8a8a", ring:"#136161" },
+  { name:"Dark Gray", ar:"رمادي داكن", c1:"#6a6d73", c2:"#2a2d33", ring:"#1a1c20" },
+  { name:"Aqua", ar:"أكوا", c1:"#8fd4d0", c2:"#2f9a92", ring:"#1d6e68" }
+];
+let _hdColorPick = null;
+
+function openHDCatalog(pid){
+  const p=PRODUCTS.find(x=>x.id===pid); if(!p) return;
+  _hdColorPick = null;
+  const grid = HD_COLORS.map((col,i)=>`
+    <div class="hdc-item" data-i="${i}" onclick="pickHDColor(${i},this)">
+      <div class="hdc-lens" style="background:radial-gradient(circle at 50% 50%, #1a1a1a 0%,#1a1a1a 16%, ${col.c1} 22%, ${col.c2} 64%, ${col.ring} 92%, ${col.ring} 100%)"></div>
+      <div class="hdc-name">${col.ar}</div>
+      <div class="hdc-en">${col.name}</div>
+    </div>`).join("");
+  document.getElementById("hdcGrid").innerHTML = grid;
+  document.getElementById("hdcConfirm").disabled = true;
+  document.getElementById("hdcModal").classList.add("open");
+  document.body.style.overflow="hidden";
+}
+function pickHDColor(i,el){
+  _hdColorPick = i;
+  document.querySelectorAll(".hdc-item").forEach(x=>x.classList.remove("sel"));
+  el.classList.add("sel");
+  const btn=document.getElementById("hdcConfirm");
+  btn.disabled=false;
+  btn.innerHTML="🛒 أضف "+HD_COLORS[i].ar+" إلى السلة";
+}
+function closeHDCatalog(){
+  document.getElementById("hdcModal").classList.remove("open");
+  document.body.style.overflow="";
+}
+function confirmHDColor(){
+  if(_hdColorPick===null) return;
+  const col=HD_COLORS[_hdColorPick];
+  const p=PRODUCTS.find(x=>x.id===2);
+  const qty=qtyMap[2]||1;
+  const key="2-"+col.name;
+  const ex=cart.find(c=>c.key===key);
+  if(ex)ex.qty+=qty;
+  else cart.push({...p, key, qty, price:p.price, varLabel:col.ar, mainImg:p.imgs[0]||''});
+  closeHDCatalog();
+  updateCartUI();
+  const cn=document.getElementById("cn");
+  if(cn){cn.classList.remove("bump");void cn.offsetWidth;cn.classList.add("bump");}
+  openCart();
+}
+
 /* HERO SLIDESHOW */
 let hIdx=0;
 const hList=["img_lv_cream_1","img_chanel_cc_1","img_maybach_1"];
@@ -897,6 +994,7 @@ function chQ(id,d){qtyMap[id]=Math.max(1,(qtyMap[id]||1)+d);const el=document.ge
 /* CART */
 function addCart(id,cardEl){
   const p=PRODUCTS.find(x=>x.id===id);if(!p)return;
+  if(id===2){openHDCatalog(2);return;}
   const qty=qtyMap[id]||1,vi=varMap[id]??-1;
   const price=vi>=0?p.variants[vi].price:p.price;
   const varLabel=vi>=0?p.variants[vi].name:"";
@@ -1081,27 +1179,24 @@ function addCartBtn(btn){
 }
 try{renderProducts();}catch(e){console.error('render error:',e);}
 try{updateCartUI();}catch(e){console.error('cart error:',e);}
-
-
-
-
-
 </script>
 
-<!-- HD Lens Color Catalog -->
-<div class="lens-cat-overlay" id="lensCat" onclick="if(event.target===this)closeLensCat()">
-  <div class="lens-cat">
-    <div class="lens-cat-head">
-      <h3>🎨 كتالوج ألوان عدسات HD</h3>
-      <button class="xbtn" onclick="closeLensCat()">✕</button>
+<!-- HD COLOR CATALOG MODAL -->
+<div class="hdc-overlay" id="hdcModal">
+  <div class="hdc-box">
+    <div class="hdc-head">
+      <div>
+        <h3>كتالوج ألوان عدسات HD</h3>
+        <p>اختر اللون المناسب لك — 16 لون فرنسي</p>
+      </div>
+      <button class="hdc-x" onclick="closeHDCatalog()">✕</button>
     </div>
-    <div class="lens-cat-sub">اختر لونك المفضل من 16 لون فرنسي — اضغط على اللون ثم أضف للسلة</div>
-    <div class="lens-grid" id="lensGrid"></div>
-    <div class="lens-cat-foot">
-      <div class="sel-info" id="lensSel">لم تختر لوناً بعد</div>
-      <button class="lens-add-btn" id="lensAddBtn" onclick="addLensToCart()" disabled>🛒 أضف للسلة</button>
+    <div class="hdc-grid" id="hdcGrid"></div>
+    <div class="hdc-foot">
+      <button class="hdc-confirm" id="hdcConfirm" onclick="confirmHDColor()" disabled>اختر لوناً أولاً</button>
     </div>
   </div>
 </div>
+
 </body>
 </html>
